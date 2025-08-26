@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-# Update port inside config
-sed -i "s/<port>8082<\/port>/<port>${PORT}<\/port>/" /opt/traccar/conf/traccar.xml
+echo "Listing /opt/traccar"
+ls -R /opt/traccar
 
-# Run the original start script (the image defaults to this)
-exec ./traccar.run
+# Sleep to keep container alive for inspection
+sleep 600
