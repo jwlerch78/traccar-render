@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-echo "Listing /opt/traccar"
-ls -R /opt/traccar
+# Replace the default port with Render's assigned port
+sed -i "s/<port>8082<\/port>/<port>${PORT}<\/port>/" /opt/traccar/conf/traccar.xml
 
-# Sleep to keep container alive for inspection
-sleep 600
+# Start Traccar
+exec /opt/traccar/jre/bin/java -jar /opt/traccar/tracker-server.jar conf/traccar.xml
