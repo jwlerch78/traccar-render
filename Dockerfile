@@ -1,17 +1,8 @@
 FROM traccar/traccar:latest
 
-# Create a custom config that uses PORT env var
-COPY <<EOF /opt/traccar/conf/traccar.xml
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
-<properties>
-    <entry key='web.port'>\${PORT}</entry>
-    <entry key='database.driver'>org.h2.Driver</entry>
-    <entry key='database.url'>jdbc:h2:./data/database</entry>
-    <entry key='database.user'>sa</entry>
-    <entry key='database.password'></entry>
-</properties>
-EOF
+# Create startup script that uses PORT environment variable
+RUN echo '#!/bin/sh' > /start.sh && \
+    echo 'java -Dfile.encoding=UTF-8 -Dweb.port=${PORT:-8082} -jar /opt/traccar/traccar.jar /opt/traccar/conf/traccar.xml' >> /start.sh && \
+    chmod +x /start.sh
 
-# Use environment variable substitution
-CMD java -Dconfig.file=/opt/traccar/conf/traccar.xml -jar /opt/traccar/traccar.jar
+CMD ["/start.sh"]
