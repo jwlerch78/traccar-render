@@ -1,10 +1,11 @@
 FROM traccar/traccar:latest
 
-# Copy your entrypoint
+# Copy in our custom entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Force Traccar’s web.port to Render’s expected 10000
-RUN sed -i "s|<entry key='web.port'>.*</entry>|<entry key='web.port'>10000</entry>|" /opt/traccar/conf/traccar.xml
+# Expose Render’s assigned port (will be injected at runtime as $PORT)
+EXPOSE 10000
 
+# Use our entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
