@@ -1,11 +1,18 @@
-FROM traccar/traccar:latest
+FROM node:20-alpine
 
-# Copy in our custom entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+WORKDIR /app
 
-# Expose Render’s assigned port (will be injected at runtime as $PORT)
-EXPOSE 10000
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
 
-# Use our entrypoint script
-ENTRYPOINT ["/entrypoint.sh"]
+# Copy the proxy code
+COPY . .
+
+# Expose the Render-assigned port
+ARG PORT=10000
+ENV PORT=$PORT
+EXPOSE $PORT
+
+# Start the proxy server
+CMD ["npm", "start"]
