@@ -19,6 +19,15 @@ if [ -f "$TRACCAR_CONF" ]; then
     else
         sed -i "/<\/properties>/i \    <entry key='web.port'>${PORT}</entry>" "$TRACCAR_CONF"
     fi
+
+# Insert or replace web.address to bind to all interfaces
+    if grep -q "web.address" "$TRACCAR_CONF"; then
+        sed -i "s|<entry key='web.address'>.*</entry>|<entry key='web.address'>0.0.0.0</entry>|" "$TRACCAR_CONF"
+    else
+        sed -i "/<\/properties>/i \ <entry key='web.address'>0.0.0.0</entry>" "$TRACCAR_CONF"
+    fi
+
+    
     echo "Updated $TRACCAR_CONF with web.port=$PORT"
 else
     echo "⚠️ No traccar.xml found at $TRACCAR_CONF!"
