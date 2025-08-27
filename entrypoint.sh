@@ -38,12 +38,14 @@ env | grep PORT
 env | grep TRACCAR_PORT
 echo "==== END DEBUG ===="
 
-# Launch Traccar in foreground using bundled JRE
-echo "Launching Traccar on 0.0.0.0:$PORT..."
-exec /opt/traccar/jre/bin/java -jar /opt/traccar/tracker-server.jar "$TRACCAR_CONF"
-
 # Wait a few seconds and check listening ports
 sleep 5
 echo "==== DEBUG: Listening TCP ports ===="
 netstat -tuln || ss -tuln || echo "no netstat/ss available"
 echo "==== END DEBUG ===="
+
+# Launch Traccar in foreground using bundled JRE
+echo "Launching Traccar on 0.0.0.0:$PORT..."
+exec /opt/traccar/jre/bin/java -jar /opt/traccar/tracker-server.jar "$TRACCAR_CONF"
+
+
