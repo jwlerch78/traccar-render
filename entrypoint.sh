@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-
 echo "==== ENTRYPOINT START ===="
 
 # Use Render's assigned PORT, default to 8082
@@ -21,28 +20,9 @@ else
     echo "⚠️ No traccar.xml found at $TRACCAR_CONF!"
 fi
 
-# Debug info: XML, env, Java process
 echo "==== DEBUG: web.port entry in traccar.xml ===="
 grep "web.port" "$TRACCAR_CONF" || echo "web.port not found!"
-echo "==== END DEBUG ===="
 
-echo "==== DEBUG: Last 20 lines of traccar.xml ===="
-tail -n 20 "$TRACCAR_CONF"
-echo "==== END DEBUG ===="
-
-echo "==== DEBUG: Environment variables ===="
-env | grep PORT
-echo "==== END DEBUG ===="
-
-# Launch Traccar in background
+# Launch Traccar in FOREGROUND (remove &)
 echo "Launching Traccar on 0.0.0.0:$PORT..."
-/opt/traccar/jre/bin/java -jar /opt/traccar/tracker-server.jar conf/traccar.xml &
-
-# Wait a few seconds and check listening ports
-sleep 5
-echo "==== DEBUG: Listening TCP ports ===="
-netstat -tuln || ss -tuln || echo "no netstat/ss available"
-echo "==== END DEBUG ===="
-
-# Bring Traccar back to foreground
-fg %1
+exec /opt/traccar/jre/bin/java -jar /opt/traccar/tracker-server.jar conf/traccar.xml
