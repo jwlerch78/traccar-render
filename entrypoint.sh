@@ -24,12 +24,29 @@ if [ -f "$TRACCAR_CONF" ]; then
     fi
     
     echo "Updated $TRACCAR_CONF with PORT=$PORT and HOST=0.0.0.0"
-else
-    echo "⚠️ No traccar.xml found at $TRACCAR_CONF!"
 fi
 
 echo "==== DEBUG: web config in traccar.xml ===="
 grep -E "web\.(port|address)" "$TRACCAR_CONF" || echo "web config not found!"
 
 echo "Launching Traccar on 0.0.0.0:$PORT..."
-exec /opt/traccar/jre/bin/java -jar /opt/traccar/tracker-server.jar conf/traccar.xml
+
+# Launch Traccar in background to monitor it
+/opt/traccar/jre/bin/java -jar /opt/traccar/tracker-server.jar conf/traccar.xml &
+TRACCAR_PID=$!
+
+# Wait and check if it's actually listening
+echo "Waiting for Traccar to start..."
+sleep 10
+
+echo "==== DEBUG: Process status ===="
+ps aux | grep java || echo "No Java processes found"
+
+echo "==== DEBUG: Network listening ===="
+netstat -tuln | grep ":$PORT" || ss -tuln | grep ":$PORT" || echo "Port $PORT not listening"
+
+echo "==== DEBUG: All listening ports ===="
+netstat -tuln || ss -tuln || echo "No listening ports"
+
+# Keep the container alive
+wait $TRACCAR_PID
