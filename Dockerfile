@@ -1,4 +1,6 @@
-# FROM traccar/traccar:latest
-FROM traccar/traccar:5.9
+FROM traccar/traccar:latest
 
-EXPOSE 8082
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
