@@ -1,18 +1,19 @@
-FROM node:20-alpine
+# Use official Node 18 image
+FROM node:18-slim
 
+# Set working directory
 WORKDIR /app
 
 # Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the proxy code
+# Copy source code
 COPY . .
 
-# Expose the Render-assigned port
-ARG PORT=10000
-ENV PORT=$PORT
+# Expose the port Render will assign
+ENV PORT=10000
 EXPOSE $PORT
 
-# Start the proxy server
-CMD ["npm", "start"]
+# Start the Node server
+CMD ["node", "server.js"]
