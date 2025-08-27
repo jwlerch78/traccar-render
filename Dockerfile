@@ -1,19 +1,14 @@
-# Use official Node 18 image
-FROM node:18-slim
+# Use the official Traccar image
+FROM traccar/traccar:latest
 
-# Set working directory
-WORKDIR /app
+# Copy your custom entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-# Copy package files and install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Copy source code
-COPY . .
-
-# Expose the port Render will assign
-ENV PORT=10000
+# Expose the port that Render will assign at runtime
+ARG PORT=10000
+ENV PORT=$PORT
 EXPOSE $PORT
 
-# Start the Node server
-CMD ["node", "server.js"]
+# Use the custom entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
